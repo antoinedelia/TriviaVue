@@ -22,7 +22,7 @@ import axios from 'axios'
 @Options({
   methods: {
     unescape (message: string) {
-      return message.replaceAll('&quot;', '"').replaceAll('&#039;', "'").replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&#038;', '&').replaceAll('&shy;', '-')
+      return message.replaceAll('&quot;', '"').replaceAll('&#039;', "'").replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&#038;', '&').replaceAll('&shy;', '-').replaceAll('&Eacute;', 'É')
     },
     checkAnswer (question: any, answer: string) {
       var clickedElement = document.getElementById(answer)
@@ -30,13 +30,14 @@ import axios from 'axios'
         return
       }
       if (question.correct_answer === answer) {
-        this.score++
+        if (!question.answer_revealed) { this.score++ }
         this.revealAnswer(question)
       } else {
         clickedElement.classList.add('btn-danger')
         clickedElement.classList.remove('btn-primary')
         this.revealAnswer(question)
       }
+      question.answer_revealed = true
     },
     revealAnswer (question: any) {
       var correctElement = document.getElementById(question.correct_answer)
@@ -61,7 +62,8 @@ import axios from 'axios'
           this.questions.push({
             question: question.question,
             possible_answers: possibleAnswers,
-            correct_answer: question.correct_answer
+            correct_answer: question.correct_answer,
+            answer_revealed: false
           })
         })
       })
